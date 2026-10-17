@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — WhatsApp Bot Premium</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg:#05060a; --fg:#e8ecf4; --accent:#00ffc8; --accent2:#7b61ff;
+    --glass:rgba(255,255,255,0.04); --border:rgba(255,255,255,0.09);
+  }
+  html { scroll-behavior:smooth; }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    overflow-x:hidden; min-height:100vh;
+  }
+  #bg3d { position:fixed; inset:0; z-index:0; }
+  .grain {
+    position:fixed; inset:0; z-index:1; pointer-events:none; opacity:0.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap { position:relative; z-index:2; }
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:10;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:22px 6vw; backdrop-filter:blur(18px);
+    background:linear-gradient(to bottom,rgba(5,6,10,0.8),transparent);
+    border-bottom:1px solid var(--border);
+  }
+  .logo { font-weight:700; letter-spacing:4px; font-size:1.05rem; }
+  .logo span { color:var(--accent); }
+  nav ul { display:flex; gap:36px; list-style:none; }
+  nav a { color:var(--fg); text-decoration:none; font-size:.85rem; letter-spacing:1px; opacity:.6; transition:.3s; }
+  nav a:hover { opacity:1; color:var(--accent); }
+  .cta {
+    padding:11px 26px; border:1px solid var(--accent); border-radius:100px;
+    color:var(--accent); text-decoration:none; font-size:.85rem; letter-spacing:1px;
+    transition:.35s; background:transparent;
+  }
+  .cta:hover { background:var(--accent); color:var(--bg); box-shadow:0 0 30px rgba(0,255,200,0.4); }
+
+  section { padding:140px 6vw; position:relative; }
+  .hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; }
+  .badge {
+    display:inline-flex; align-items:center; gap:8px; width:fit-content;
+    padding:7px 16px; border-radius:100px; font-size:.72rem; letter-spacing:2px;
+    border:1px solid var(--border); background:var(--glass); margin-bottom:32px;
+  }
+  .dot { width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  h1 {
+    font-size:clamp(2.8rem,8vw,6.5rem); font-weight:700; line-height:1.02;
+    letter-spacing:-3px; max-width:14ch;
+  }
+  h1 .grad {
+    background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub { margin-top:28px; font-size:1.15rem; opacity:.55; max-width:52ch; line-height:1.7; font-weight:300; }
+  .hero-btns { margin-top:48px; display:flex; gap:18px; flex-wrap:wrap; }
+  .btn-p {
+    padding:16px 38px; border-radius:100px; background:var(--accent); color:var(--bg);
+    text-decoration:none; font-weight:500; letter-spacing:.5px;
+    box-shadow:0 0 40px rgba(0,255,200,0.25); transition:.35s;
+  }
+  .btn-p:hover { transform:translateY(-2px); box-shadow:0 0 60px rgba(0,255,200,0.5); }
+  .btn-s {
+    padding:16px 38px; border-radius:100px; border:1px solid var(--border);
+    color:var(--fg); text-decoration:none; letter-spacing:.5px;
+    background:var(--glass); backdrop-filter:blur(10px); transition:.35s;
+  }
+  .btn-s:hover { border-color:var(--fg); }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:22px; margin-top:64px; }
+  .card {
+    padding:38px 32px; border-radius:20px; border:1px solid var(--border);
+    background:var(--glass); backdrop-filter:blur(20px);
+    transition:.4s; position:relative; overflow:hidden;
+  }
+  .card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    opacity:0; transition:.4s;
+  }
+  .card:hover { transform:translateY(-6px); border-color:rgba(0,255,200,0.3); }
+  .card:hover::before { opacity:1; }
+  .card .ic {
+    font-size:1.6rem; width:54px; height:54px; display:flex; align-items:center; justify-content:center;
+    border-radius:14px; background:linear-gradient(135deg,rgba(0,255,200,0.12),rgba(123,97,255,0.12));
+    border:1px solid var(--border); margin-bottom:24px;
+  }
+  .card h3 { font-size:1.25rem; margin-bottom:12px; font-weight:500; }
+  .card p { opacity:.5; font-size:.92rem; line-height:1.7; font-weight:300; }
+
+  .section-title { font-size:clamp(2rem,5vw,3.4rem); letter-spacing:-2px; font-weight:700; line-height:1.1; }
+  .section-title .grad {
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .section-sub { margin-top:18px; opacity:.5; max-width:48ch; font-weight:300; line-height:1.7; }
+
+  footer { padding:60px 6vw; border-top:1px solid var(--border); text-align:center; opacity:.4; font-size:.82rem; letter-spacing:1px; }
+
+  .reveal { opacity:0; transform:translateY(30px); transition:.9s cubic-bezier(.16,1,.3,1); }
+  .reveal.in { opacity:1; transform:none; }
+  @media(max-width:768px){ nav ul{display:none} }
+</style>
+</head>
+<body>
+<canvas id="bg3d"></canvas>
+<div class="grain"></div>
+
+<div class="wrap">
+<nav>
+  <div class="logo">NEX<span>US</span></div>
+  <ul>
+    <li><a href="#fitur">Fitur</a></li>
+    <li><a href="#arsitektur">Arsitektur</a></li>
+    <li><a href="#mulai">Mulai</a></li>
+  </ul>
+  <a class="cta" href="#mulai">Hubungkan</a>
+</nav>
+
+<section class="hero">
+  <div class="badge"><span class="dot"></span> SISTEM AKTIF · TERMUX NODE 18+</div>
+  <h1>Bot WhatsApp <span class="grad">Generasi Baru</span></h1>
+  <p class="sub">Arsitektur Baileys berbasis event, latensi rendah, autentikasi multi-perangkat. Dijalankan di Termux, disimpan di GitHub, dikendalikan dari mana saja.</p>
+  <div class="hero-btns">
+    <a class="btn-p" href="#mulai">Mulai Sekarang</a>
+    <a class="btn-s" href="#fitur">Lihat Fitur</a>
+  </div>
+</section>
+
+<section id="fitur">
+  <h2 class="section-title reveal">Dibangun untuk <span class="grad">kecepatan.</span></h2>
+  <p class="section-sub reveal">Setiap komponen dipilih untuk latensi minimum dan stabilitas maksimum pada perangkat mobile.</p>
+  <div class="grid">
+    <div class="card reveal"><div class="ic">⚡</div><h3>Event-Driven</h3><p>Baileys multi-device socket. Tanpa polling. Respons per-query di bawah 200ms pada koneksi stabil.</p></div>
+    <div class="card reveal"><div class="ic">🔐</div><h3>Auth Persisten</h3><p>Sesi tersimpan di direktori auth_info. Satu scan QR, koneksi permanen. Tanpa login ulang.</p></div>
+    <div class="card reveal"><div class="ic">🧩</div><h3>Plugin Modular</h3><p>Handler perintah terpisah. Tambah fitur tanpa menyentuh core. Hot-reload kompatibel.</p></div>
+    <div class="card reveal"><div class="ic">📱</div><h3>Termux Native</h3><p>Berjalan tanpa root. tmux session menjaga proses hidup saat layar terkunci. RAM footprint di bawah 90MB.</p></div>
+    <div class="card reveal"><div class="ic">🌐</div><h3>GitHub Pages</h3><p>Landing statis ter-deploy otomatis dari branch main. Status bot dibaca dari endpoint terpisah.</p></div>
+    <div class="card reveal"><div class="ic">♻️</div><h3>Auto-Reconnect</h3><p>DisconnectReason handler. Reconnect otomatis pada status non-loggedOut. Zero downtime.</p></div>
+  </div>
+</section>
+
+<section id="arsitektur">
+  <h2 class="section-title reveal">Arsitektur <span class="grad">sederhana.</span></h2>
+  <p class="section-sub reveal">Tiga lapisan. Tanpa server yang perlu dikelola. Tanpa biaya bulanan.</p>
+  <div class="grid">
+    <div class="card reveal"><div class="ic">01</div><h3>Termux · Runtime</h3><p>Node 18+, Baileys, pino logger. Proses berjalan di tmux. Kredensial di auth_info lokal.</p></div>
+    <div class="card reveal"><div class="ic">02</div><h3>GitHub · Repositori</h3><p>Kode sumber, .gitignore melindungi auth_info. Version control penuh. Rollback instan.</p></div>
+    <div class="card reveal"><div class="ic">03</div><h3>Pages · Frontend</h3><p>Landing ini. Statis. CDN global. Deploy otomatis dari push ke main.</p></div>
+  </div>
+</section>
+
+<section id="mulai">
+  <h2 class="section-title reveal">Empat langkah. <span class="grad">Selesai.</span></h2>
+  <p class="section-sub reveal">Dari nol ke bot aktif dalam hitungan menit.</p>
+  <div class="grid">
+    <div class="card reveal"><div class="ic">1</div><h3>Setup Termux</h3><p>pkg install nodejs git tmux. Verifikasi dengan node -v. Node 18+ wajib.</p></div>
+    <div class="card reveal"><div class="ic">2</div><h3>Instal Bot</h3><p>npm i @whiskeysockets/baileys qrcode-terminal pino. Jalankan node bot.js. Scan QR.</p></div>
+    <div class="card reveal"><div class="ic">3</div><h3>Push GitHub</h3><p>git init, commit, remote add. .gitignore: auth_info/, node_modules/. Push ke main.</p></div>
+    <div class="card reveal"><div class="ic">4</div><h3>Aktifkan Pages</h3><p>Settings → Pages → branch main → root. Landing live di USERNAME.github.io/repo.</p></div>
+  </div>
+</section>
+
+<footer>NEXUS · Baileys · Three.js r160 · GitHub Pages · Termux</footer>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+const canvas = document.getElementById('bg3d');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x05060a, 0.035);
+
+const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 200);
+camera.position.z = 32;
+
+// Particle field
+const N = 2200;
+const pos = new Float32Array(N * 3);
+const col = new Float32Array(N * 3);
+const c1 = new THREE.Color(0x00ffc8);
+const c2 = new THREE.Color(0x7b61ff);
+for (let i = 0; i < N; i++) {
+  const r = 40 + Math.random() * 60;
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+  pos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+  pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+  pos[i*3+2] = r * Math.cos(phi);
+  const mixed = c1.clone().lerp(c2, Math.random());
+  col[i*3] = mixed.r; col[i*3+1] = mixed.g; col[i*3+2] = mixed.b;
+}
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+const mat = new THREE.PointsMaterial({
+  size: 0.18, vertexColors: true, transparent: true, opacity: 0.9,
+  blending: THREE.AdditiveBlending, depthWrite: false
+});
+const points = new THREE.Points(geo, mat);
+scene.add(points);
+
+// Wireframe icosahedron centerpiece
+const icoGeo = new THREE.IcosahedronGeometry(9, 1);
+const icoMat = new THREE.MeshBasicMaterial({
+  color: 0x00ffc8, wireframe: true, transparent: true, opacity: 0.12
+});
+const ico = new THREE.Mesh(icoGeo, icoMat);
+scene.add(ico);
+
+const ico2 = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(13, 0),
+  new THREE.MeshBasicMaterial({ color: 0x7b61ff, wireframe:true, transparent:true, opacity:0.06 })
+);
+scene.add(ico2);
+
+let mx = 0, my = 0;
+addEventListener('mousemove', e => {
+  mx = (e.clientX / innerWidth - 0.5) * 2;
+  my = (e.clientY / innerHeight - 0.5) * 2;
+});
+
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  points.rotation.y = t * 0.03;
+  points.rotation.x = t * 0.012;
+  ico.rotation.y = t * 0.18;
+  ico.rotation.x = t * 0.08;
+  ico2.rotation.y = -t * 0.1;
+  ico2.rotation.z = t * 0.06;
+  camera.position.x += (mx * 4 - camera.position.x) * 0.04;
+  camera.position.y += (-my * 4 - camera.position.y) * 0.04;
+  camera.lookAt(0, 0, 0);
+  renderer.render(scene, camera);
+}
+animate();
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+// Scroll reveal
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach((el, i) => {
+  el.style.transitionDelay = (i % 6 * 60) + 'ms';
+  io.observe(el);
+});
+</script>
+</body>
+</html>
